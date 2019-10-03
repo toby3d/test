@@ -1,0 +1,52 @@
+syntax = "proto3";
+package model;
+
+service ShopCart { // Сервис корзины товаров
+	rpc Add (AddRequest) returns (Response) {} // Добавление товара в корзину
+	rpc Get (GetRequest) returns (Response) {} // Get получение текущего состояния корзины
+	rpc Update (UpdateRequest) returns (Response) {} // Обновление товара в корзине
+	rpc Remove (RemoveRequest) returns (Response) {} // Удаление товара из корзины
+}
+
+message Product { // Модель продукта доступного для добавления в корзину
+	uint64 id = 1; // ID продукта
+	string name = 2; // Имя/название продукта
+	float price = 3; // Цена за единицу продукта
+}
+
+message Item { // Модель объекта корзины
+	uint64 product_id = 1; // ID продукта
+	int32 quanity = 2; // Количество объекта в корзине
+}
+
+message Cart {
+	repeated Item items = 1; // Список всех товаров в корзине
+	float total_price = 2; // Общая сумма за все товары
+	int32 items_count = 3; // Число уникальных товаров в корзине
+	int32 quanity_count = 4; // Общая сумма количества всех товаров
+}
+
+message AddRequest {
+	uint64 product_id = 1; // ID продукта
+	int32 quanity = 2; // Добавляемое количество продуктов
+}
+
+message GetRequest {} // Без каких-либо специальных параметров
+
+message UpdateRequest {
+	uint64 product_id = 1; // ID продукта
+	int32 quanity = 2; // Новое количество продуктов
+}
+
+message RemoveRequest {
+	uint64 product_id = 1; // ID продукта
+}
+
+message Response { // Модель ответа
+	bool ok = 1; // Тип ответа: успешный или нет
+	string description = 2; // Описание ошибки в случае невалидного ответа
+	oneof result { // Результаты запросов
+		Item item = 3;
+		Cart cart = 4;
+	}
+}
